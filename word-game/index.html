@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二年级下册生字消消乐</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- 音效控制 -->
+        <div class="audio-controls">
+            <button id="bgm-toggle" class="control-btn" aria-label="切换背景音乐">🎵</button>
+            <button id="sfx-toggle" class="control-btn" aria-label="切换音效">🔔</button>
+        </div>
+
+        <h1>二年级生字消消乐</h1>
+        
+        <!-- 音频加载提示 (隐藏) -->
+        <div id="audio-files" style="display:none;">
+            <audio id="bgm" loop>
+                <source src="bgm.wav" type="audio/wav">
+            </audio>
+            <audio id="sfx-success">
+                <source src="applause.wav" type="audio/wav">
+            </audio>
+            <audio id="sfx-fail">
+                <source src="crow.wav" type="audio/wav">
+            </audio>
+        </div>
+        
+        <!-- 首页：单元选择 -->
+        <div id="home-screen" class="screen active">
+            <div class="unit-grid">
+                <button class="unit-btn" onclick="startGame(1)">第一单元</button>
+                <button class="unit-btn" onclick="startGame(2)">第二单元</button>
+                <button class="unit-btn" onclick="startGame(3)">第三单元</button>
+                <button class="unit-btn" onclick="startGame(4)">第四单元</button>
+                <button class="unit-btn" onclick="startGame(5)">第五单元</button>
+                <button class="unit-btn" onclick="startGame(6)">第六单元</button>
+                <button class="unit-btn" onclick="startGame(7)">第七单元</button>
+                <button class="unit-btn" onclick="startGame(8)">第八单元</button>
+            </div>
+        </div>
+
+        <!-- 游戏界面 -->
+        <div id="game-screen" class="screen hidden">
+            <div class="game-header">
+                <button id="back-btn" onclick="goHome()">返回</button>
+                <div class="timer">时间: <span id="time-display">00:00</span></div>
+            </div>
+            <div id="game-board" class="game-board">
+                <!-- 泡泡在这里生成 -->
+            </div>
+        </div>
+
+        <!-- 结算界面 -->
+        <div id="result-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="result-title">恭喜挑战成功！</h2>
+                <p>用时: <span id="final-time"></span></p>
+                <div id="error-section" class="hidden">
+                    <h3>需加强练习的生字：</h3>
+                    <ul id="error-list"></ul>
+                </div>
+                <div class="result-buttons">
+                    <button class="restart-btn" onclick="restartCurrentGame()">再来一局</button>
+                    <button class="return-btn" onclick="goHome()">返回主页</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 通关界面 -->
+        <div id="game-over-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>恭喜你！</h2>
+                <p>你已经完成了所有关卡！</p>
+                <button id="restart-btn" onclick="location.reload()">再玩一次</button>
+                <button id="return-btn" style="display:none; margin-top: 10px;" onclick="window.history.back()">返回</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

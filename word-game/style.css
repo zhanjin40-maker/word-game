@@ -1,0 +1,374 @@
+:root {
+    --bg-color: #e0f7fa;
+    --primary-color: #4dd0e1;
+    --text-color: #333;
+    /* Responsive bubble size: min(viewport-based, max-px) */
+    /* Increased from 13vmin to 14.5vmin to enlarge bubbles */
+    /* Max pixel size adjusted to 150px */
+    --bubble-dim: min(14.5vmin, 150px);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /* Use standard Heiti (Black) font stack for Chinese */
+    font-family: "SimHei", "Heiti SC", "Microsoft YaHei", sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #e0f7fa 0%, #b9f6ca 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.game-container {
+    width: 95%;
+    max-width: 800px; /* Reduced max-width for more compact layout */
+    height: auto; 
+    min-height: 80vh; /* Reduced min-height */
+    max-height: 98vh; 
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    padding: 10px; /* Reduced padding */
+    position: relative;
+    overflow-y: auto; 
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+#mute-btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    z-index: 10;
+}
+
+#mute-btn:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+.audio-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.control-btn {
+    background: #f0f0f0;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s, background 0.2s;
+}
+
+.control-btn:hover {
+    transform: scale(1.1);
+    background: #e0e0e0;
+}
+
+.control-btn.muted {
+    opacity: 0.6;
+    filter: grayscale(100%);
+}
+
+h1 {
+    color: #00796b;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Unit Selection Grid */
+.unit-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 40px;
+    flex: 1;
+    align-content: center;
+}
+
+.unit-btn {
+    background: linear-gradient(to bottom, #81c784, #4caf50);
+    border: none;
+    border-radius: 15px;
+    padding: 30px;
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: bold;
+}
+
+.unit-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.6);
+}
+
+.unit-btn:active {
+    transform: translateY(2px);
+}
+
+/* Game Board */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00695c;
+}
+
+#back-btn {
+    padding: 10px 20px;
+    background-color: #ffab91;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+#back-btn:hover {
+    background-color: #ff8a65;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(3, auto); /* Use auto to pack rows tightly */
+    gap: 15px; /* Increased all gaps to 15px as requested */
+    flex: 1;
+    padding: 0; /* Zero padding */
+    perspective: 1000px; 
+    place-items: center; /* Center items in grid cells */
+    align-content: center; /* Center the grid vertically in the container */
+}
+
+.bubble {
+    position: relative;
+    /* Use standardized dimension variable */
+    width: var(--bubble-dim);
+    height: var(--bubble-dim);
+    /* Constraints to prevent overflow */
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: 1 / 1;
+    
+    border-radius: 50%; /* Perfectly round */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Use rounded, simple font for better readability and cuteness */
+    font-family: "YouYuan", "幼圆", "Microsoft YaHei", "微软雅黑", sans-serif;
+    /* Font size reduced to 35% of bubble size to strictly ensure it stays inside with padding */
+    font-size: calc(var(--bubble-dim) * 0.35); 
+    font-weight: bold; 
+    letter-spacing: 1px; 
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.3s ease, opacity 0.5s ease;
+    background: radial-gradient(circle at 35% 35%, white 5%, var(--bubble-color, #4dd0e1) 40%, #9e9e9e 90%);
+    box-shadow: 
+        inset -2px -2px 4px rgba(0,0,0,0.2), 
+        inset 2px 2px 4px rgba(255,255,255,0.5),
+        1px 2px 3px rgba(0,0,0,0.15);
+    color: #fff;
+    /* Removed text shadow for cleaner look */
+    text-shadow: none; 
+    line-height: 1; 
+}
+
+/* Specific style for pinyin bubbles to prevent overflow */
+.bubble.pinyin {
+    /* Smaller font for pinyin (longer text) */
+    font-size: calc(var(--bubble-dim) * 0.25);
+    letter-spacing: 0; /* Remove letter spacing for tight fit */
+}
+
+.bubble:hover {
+    transform: scale(1.05);
+}
+
+.bubble.selected {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px yellow;
+    border: 3px solid #fff;
+}
+
+.bubble.matched {
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+#result-title {
+    font-size: 2.5rem;
+    color: #4caf50;
+    margin-bottom: 20px;
+}
+
+#final-time {
+    font-size: 2rem;
+    color: #f57c00;
+    font-weight: bold;
+}
+
+#error-section {
+    margin-top: 20px;
+    text-align: left;
+    background: #ffebee;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+#error-section h3 {
+    color: #c62828;
+}
+
+#error-list {
+    list-style: none;
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#error-list li {
+    background: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ffcdd2;
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.result-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.restart-btn, .return-btn {
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.restart-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.restart-btn:hover {
+    background-color: #45a049;
+}
+
+.return-btn {
+    background-color: #FF9800;
+    color: white;
+}
+
+.return-btn:hover {
+    background-color: #FB8C00;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    :root {
+        /* Mobile: Increased from 29.5vmin to 31vmin */
+        --bubble-dim: min(31vmin, 180px);
+    }
+    .unit-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .game-board {
+        /* Switch to 3 columns on smaller screens to prevent overflow */
+        grid-template-columns: repeat(3, 1fr); 
+        grid-template-rows: repeat(6, auto); /* Pack rows tightly */
+        gap: 12px;
+    }
+    .bubble {
+        font-size: 1.5rem; /* Smaller font on mobile */
+        /* Removed fixed min-height to allow perfect circles */
+    }
+    h1 {
+        font-size: 1.5rem;
+    }
+}
